@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ayesh Easy Clamp</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <!-- Header -->
+  <header class="bg-black text-white p-4 text-center">
+    <h1 class="text-2xl font-bold">Ayesh Easy Clamp</h1>
+    <p class="text-sm">Simple • Strong • Reliable</p>
+  </header>
+
+  <!-- Product Section -->
+  <section class="max-w-4xl mx-auto p-6">
+    <div class="bg-white rounded-2xl shadow-md p-6">
+      <h2 class="text-xl font-semibold mb-4">Product Details</h2>
+      
+      <!-- Product Image -->
+      <img src="WhatsApp Image 2026-02-15 at 20.11.27.jpeg?text=Ayesh+Easy+Clamp" alt="Easy Clamp" class="rounded-xl mb-4 w-full" />
+
+      <p class="mb-2"><strong>Product Name:</strong> Ayesh Easy Clamp</p>
+      <p class="mb-2"><strong>Available Sizes:</strong> 12, 14, 16, 18</p>
+      <p class="mb-2"><strong>Price:</strong> 100 BDT per piece</p>
+      <p class="mb-2 text-green-600 font-semibold">Cash on Delivery Available</p>
+
+      <h3 class="text-lg font-semibold mt-6">Payment Methods</h3>
+      <ul class="list-disc ml-6 mt-2">
+        <li>bKash: 01911338118</li>
+        <li>Nagad: 01911338118</li>
+      </ul>
+      <p class="text-sm mt-2 text-gray-700 italic">
+        Note: Please make the payment via bKash or Nagad and provide the last 4 digits of the transaction when placing your order.
+      </p>
+
+      <!-- Order Form -->
+      <h3 class="text-lg font-semibold mt-6">Place Your Order</h3>
+      <form id="orderForm" class="mt-4 space-y-3">
+
+        <input id="name" type="text" placeholder="Your Name" class="w-full border p-2 rounded" required />
+        <input id="phone" type="text" placeholder="Phone Number" class="w-full border p-2 rounded" required />
+        <textarea id="address" placeholder="Delivery Address" class="w-full border p-2 rounded" required></textarea>
+        <select id="paymentMethod" class="w-full border p-2 rounded" required>
+          <option value="">Select Payment Method</option>
+          <option>bKash</option>
+          <option>Nagad</option>
+        </select>
+        <input id="paymentDigits" type="text" placeholder="Last 4 digits of payment" class="w-full border p-2 rounded" required />
+
+        <h4 class="mt-4 font-semibold">Select Quantity per Size (min total 5 pieces)</h4>
+        <div class="grid grid-cols-2 gap-3 mt-2">
+          <div>
+            <label>Size 12:</label>
+            <input type="number" id="size12" value="0" min="0" class="w-full border p-2 rounded" />
+          </div>
+          <div>
+            <label>Size 14:</label>
+            <input type="number" id="size14" value="0" min="0" class="w-full border p-2 rounded" />
+          </div>
+          <div>
+            <label>Size 16:</label>
+            <input type="number" id="size16" value="0" min="0" class="w-full border p-2 rounded" />
+          </div>
+          <div>
+            <label>Size 18:</label>
+            <input type="number" id="size18" value="0" min="0" class="w-full border p-2 rounded" />
+          </div>
+        </div>
+
+        <p id="totalPrice" class="font-semibold text-lg mt-2">Total Price: 0 BDT</p>
+        <button type="submit" class="bg-black text-white px-4 py-2 rounded-xl w-full">Order via WhatsApp</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center p-4 text-gray-500 text-sm">
+    © 2026 Ayesh Easy Clamp. All rights reserved.
+  </footer>
+
+  <script>
+    const pricePerPiece = 100;
+    const totalPriceElement = document.getElementById('totalPrice');
+    const sizes = ["12","14","16","18"];
+
+    function updateTotalPrice() {
+      let totalQty = 0;
+      sizes.forEach(size => {
+        totalQty += parseInt(document.getElementById("size"+size).value) || 0;
+      });
+      totalPriceElement.textContent = `Total Price: ${totalQty * pricePerPiece} BDT`;
+      return totalQty;
+    }
+
+    sizes.forEach(size => {
+      document.getElementById("size"+size).addEventListener('input', updateTotalPrice);
+    });
+
+    document.getElementById('orderForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const paymentMethod = document.getElementById('paymentMethod').value;
+      const paymentDigits = document.getElementById('paymentDigits').value.trim();
+
+      // Collect quantities
+      const quantities = {};
+      let totalQty = 0;
+      sizes.forEach(size => {
+        const q = parseInt(document.getElementById("size"+size).value) || 0;
+        quantities[size] = q;
+        totalQty += q;
+      });
+
+      if(totalQty < 5){
+        alert("Minimum total order is 5 pieces.");
+        return;
+      }
+
+      if(!name || !phone || !address || !paymentMethod || !paymentDigits){
+        alert("Please fill all fields.");
+        return;
+      }
+
+      // Build message
+      let messageText = `New Order - Ayesh Easy Clamp\nName: ${name}\nPhone: ${phone}\nAddress: ${address}\nPayment Method: ${paymentMethod}\nPayment Last 4 digits: ${paymentDigits}\n\nOrder Details:\n`;
+      sizes.forEach(size => {
+        if(quantities[size] > 0){
+          messageText += `Size ${size}: ${quantities[size]} pcs\n`;
+        }
+      });
+      messageText += `\nTotal Price: ${totalQty * pricePerPiece} BDT`;
+
+      // WhatsApp redirect
+      const encodedMessage = encodeURIComponent(messageText);
+      const whatsappNumber = "8801911338118";
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      let url;
+      if(isMobile){
+        url = `whatsapp://send?phone=${whatsappNumber}&text=${encodedMessage}`;
+      } else {
+        url = `https://web.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMessage}`;
+      }
+
+      window.location.href = url;
+    });
+  </script>
+</body>
+</html>
